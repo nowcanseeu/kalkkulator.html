@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator I MISS U</title>
+  <style>
+    body {
+      background-color: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+      padding: 10px;
+    }
+
+    .calculator {
+      width: 100%;
+      max-width: 360px;
+      background-color: #1c1c1c;
+      border-radius: 30px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      z-index: 10;
+      position: relative;
+    }
+
+    .display {
+      background-color: #000;
+      color: #fff;
+      font-size: 40px;
+      text-align: right;
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      overflow-x: auto;
+      word-wrap: break-word;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .btn {
+      font-size: 24px;
+      padding: 16px;
+      border: none;
+      border-radius: 50%;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn:active {
+      opacity: 0.7;
+    }
+
+    .light-gray {
+      background-color: #d4d4d2;
+      color: #000;
+    }
+
+    .dark-gray {
+      background-color: #505050;
+    }
+
+    .orange {
+      background-color: #ff9500;
+    }
+
+    .wide {
+      grid-column: span 2;
+      border-radius: 40px;
+    }
+
+    /* ❤️ Efek animasi love jatuh */
+    .heart {
+      position: absolute;
+      top: -30px;
+      font-size: 24px;
+      color: #ff4d88;
+      animation: fall 3s linear forwards;
+      pointer-events: none;
+      z-index: 1000;
+      transform: rotate(0deg);
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) translateX(var(--swing)) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* 🌐 Responsif untuk HP */
+    @media (max-width: 480px) {
+      .calculator {
+        padding: 15px;
+      }
+
+      .display {
+        font-size: 32px;
+        padding: 15px;
+      }
+
+      .btn {
+        font-size: 20px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button class="btn light-gray" onclick="clearDisplay()">AC</button>
+      <button class="btn light-gray" onclick="toggleSign()">±</button>
+      <button class="btn light-gray" onclick="inputOperator('%')">%</button>
+      <button class="btn orange" onclick="inputOperator('/')">÷</button>
+
+      <button class="btn dark-gray" onclick="inputNumber('7')">7</button>
+      <button class="btn dark-gray" onclick="inputNumber('8')">8</button>
+      <button class="btn dark-gray" onclick="inputNumber('9')">9</button>
+      <button class="btn orange" onclick="inputOperator('*')">×</button>
+
+      <button class="btn dark-gray" onclick="inputNumber('4')">4</button>
+      <button class="btn dark-gray" onclick="inputNumber('5')">5</button>
+      <button class="btn dark-gray" onclick="inputNumber('6')">6</button>
+      <button class="btn orange" onclick="inputOperator('-')">−</button>
+
+      <button class="btn dark-gray" onclick="inputNumber('1')">1</button>
+      <button class="btn dark-gray" onclick="inputNumber('2')">2</button>
+      <button class="btn dark-gray" onclick="inputNumber('3')">3</button>
+      <button class="btn orange" onclick="inputOperator('+')">+</button>
+
+      <button class="btn dark-gray wide" onclick="inputNumber('0')">0</button>
+      <button class="btn dark-gray" onclick="inputNumber('.')">.</button>
+      <button class="btn orange" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById("display");
+    let currentInput = "0";
+    let operator = null;
+    let previousInput = null;
+
+    function updateDisplay() {
+      display.textContent = currentInput;
+    }
+
+    function inputNumber(number) {
+      if (currentInput === "0" && number !== ".") {
+        currentInput = number;
+      } else if (number === "." && currentInput.includes(".")) {
+        return;
+      } else {
+        currentInput += number;
+      }
+      updateDisplay();
+    }
+
+    function inputOperator(op) {
+      if (operator !== null) {
+        calculate();
+      }
+      previousInput = currentInput;
+      currentInput = "0";
+      operator = op;
+    }
+
+    function clearDisplay() {
+      currentInput = "0";
+      previousInput = null;
+      operator = null;
+      updateDisplay();
+    }
+
+    function toggleSign() {
+      currentInput = (parseFloat(currentInput) * -1).toString();
+      updateDisplay();
+    }
+
+    function calculate() {
+      if (operator === null || previousInput === null) return;
+
+      const prev = parseFloat(previousInput);
+      const curr = parseFloat(currentInput);
+      let result;
+
+      // Jika penjumlahan, tampilkan "I MISS U" dan animasi
+      if (operator === "+") {
+        currentInput = "I MISS U";
+        operator = null;
+        previousInput = null;
+        updateDisplay();
+        triggerHearts();
+        return;
+      }
+
+      switch (operator) {
+        case "-":
+          result = prev - curr;
+          break;
+        case "*":
+          result = prev * curr;
+          break;
+        case "/":
+          result = curr !== 0 ? prev / curr : "Error";
+          break;
+        case "%":
+          result = prev % curr;
+          break;
+      }
+
+      currentInput = result.toString();
+      operator = null;
+      previousInput = null;
+      updateDisplay();
+    }
+
+    function triggerHearts() {
+      const count = 30;
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const heart = document.createElement("div");
+          heart.classList.add("heart");
+          heart.style.left = Math.random() * 90 + "vw";
+          heart.style.fontSize = Math.random() * 20 + 20 + "px";
+          heart.style.setProperty("--swing", `${(Math.random() * 80 - 40)}px`);
+          heart.textContent = "❤️";
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 3000);
+        }, i * 100);
+      }
+    }
+  </script>
+</body>
+</html>
